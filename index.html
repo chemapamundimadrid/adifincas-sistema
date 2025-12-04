@@ -3,243 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADIFINCAS | Gestión Incidencias</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>ADIFINCAS | Gestión v3.4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --brand: #0f172a;       /* Azul Muy Oscuro (Serio) */
-            --accent: #3b82f6;      /* Azul Acción */
-            --bg-body: #f1f5f9;
-            --surface: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #334155;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --primary: #0056b3; 
+            --primary-dark: #003d82;
+            --bg: #f3f4f6; 
+            --white: #ffffff; 
+            --text: #1f2937;
+            --border: #e5e7eb; 
+            --danger: #dc2626;
+            --warning-bg: #fffbeb; 
+            --warning-border: #fcd34d;
+            --success: #059669;
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; height: 100vh; overflow: hidden; display: flex; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; display: none; }
 
-        /* LOGIN */
-        #loginScreen { position: fixed; inset: 0; background: var(--brand); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; }
-        .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
-        .btn-full { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        /* LOGIN (Estilo Index.2) */
+        #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary) 0%, #002a4d 100%); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .login-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; box-sizing: border-box; }
+        .btn-login { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-login:hover { background: var(--primary-dark); }
+        .error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 10px; display: none; }
+
+        /* HEADER */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: var(--white); padding: 15px 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo h1 { margin: 0; font-size: 1.5rem; color: var(--primary); letter-spacing: -0.5px; }
+        .user-badge { background: #eff6ff; color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid #dbeafe; }
+        .btn-db { background: var(--success); color: white; padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; margin-left: 10px; text-decoration: none; display: inline-block;}
+        .btn-db:hover { background: #047857; }
 
         /* LAYOUT */
-        .sidebar { width: 240px; background: var(--brand); color: white; display: flex; flex-direction: column; padding: 20px; }
-        .logo { font-size: 1.4rem; font-weight: 700; margin-bottom: 40px; letter-spacing: 1px; color: white; }
-        .nav-item { padding: 12px 15px; margin-bottom: 5px; border-radius: 8px; color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
-        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
-        
-        .main { flex: 1; padding: 30px; overflow-y: auto; display: none; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .title { font-size: 1.8rem; font-weight: 700; color: var(--brand); }
-
-        /* VISTAS */
-        .view { display: none; }
-        .view.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
-
-        /* TABLAS */
-        .crm-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .crm-table th { text-align: left; padding: 10px 15px; color: #64748b; font-size: 0.75rem; text-transform: uppercase; }
-        .crm-row { background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
-        .crm-row:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .crm-row td { padding: 15px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .crm-row td:first-child { border-left: 1px solid var(--border); border-radius: 8px 0 0 8px; font-weight: bold; color: var(--accent); }
-        .crm-row td:last-child { border-right: 1px solid var(--border); border-radius: 0 8px 8px 0; }
-
-        /* TAGS */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-        .st-nuevo { background: #dbeafe; color: #1e40af; }
-        .st-curso { background: #fef3c7; color: #92400e; }
-        .st-resuelto { background: #dcfce7; color: #166534; }
-
-        /* MODALES */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; justify-content: center; align-items: center; }
-        .modal-window { background: white; width: 90%; max-width: 900px; height: 85vh; border-radius: 12px; display: flex; overflow: hidden; }
-        
-        /* DETALLE TICKET */
-        .ticket-layout { display: grid; grid-template-columns: 280px 1fr; width: 100%; height: 100%; }
-        .ticket-info { background: #f8fafc; border-right: 1px solid var(--border); padding: 25px; overflow-y: auto; }
-        .ticket-chat { display: flex; flex-direction: column; height: 100%; background: white; }
-        .chat-feed { flex: 1; padding: 25px; overflow-y: auto; }
-        .chat-input { padding: 20px; border-top: 1px solid var(--border); background: #f8fafc; }
-
-        /* Timeline Items */
-        .msg-item { margin-bottom: 15px; }
-        .msg-meta { font-size: 0.75rem; color: #64748b; margin-bottom: 4px; }
-        .msg-bubble { background: white; border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; display: inline-block; max-width: 90%; }
-        .msg-system { text-align: center; color: #94a3b8; font-style: italic; font-size: 0.8rem; margin: 15px 0; }
+        .main-grid { display: grid; grid-template-columns: 350px 1fr; gap: 25px; align-items: start; }
+        .form-section { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 20px; }
+        .data-section { background: var(--white); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; }
 
         /* FORMULARIOS */
-        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; color: #64748b; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; margin-bottom: 15px; }
-        .btn-action { padding: 8px 15px; border: 1px solid var(--border); background: white; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #4b5563; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1); }
+        button.btn-primary { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        button.btn-primary:hover { background: var(--primary-dark); }
 
+        /* ZONA DE FILTROS (Diseño integrado) */
+        .filters-bar { padding: 20px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; gap: 15px; flex-wrap: wrap; }
+        .filter-input { flex: 1; min-width: 200px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #f9fafb; }
+        .filter-select { width: 180px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #f9fafb; cursor: pointer; }
+
+        /* TABLA (Estilo limpio Index.2) */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px 20px; background: #f9fafb; font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 700; border-bottom: 1px solid var(--border); }
+        td { padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: top; color: #374151; }
+        tr:hover { background-color: #f8fafc; }
+        
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: inline-block; }
+        .tag-pendiente { background: #fee2e2; color: #991b1b; }
+        .tag-en-curso { background: #fef3c7; color: #92400e; }
+        .tag-resuelto { background: #d1fae5; color: #065f46; }
+
+        /* Botón de Acción en Tabla */
+        .btn-action { background: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-action:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* MODAL UNIFICADO */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
+        .modal h2 { margin-top: 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+
+        .history-box { background: #f8fafc; padding: 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; color: #334155; max-height: 250px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; line-height: 1.5; }
+
+        /* ZONA DE EDICIÓN */
+        #editSection { display: none; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; animation: slideDown 0.3s; }
+        @keyframes slideDown { from {opacity:0; transform:translateY(-10px);} to {opacity:1; transform:translateY(0);} }
+
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-close { background: #e5e7eb; padding: 10px 20px; border-radius: 6px; cursor: pointer; border: none; color: #374151; font-weight: bold; }
+        .btn-close:hover { background: #d1d5db; }
+        .btn-add { background: var(--primary); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; }
+        .btn-add:hover { background: var(--primary-dark); }
+        .btn-save { background: var(--success); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; width: 100%; }
+        .btn-save:hover { background: #047857; }
+
+        /* ALERTAS */
+        #matchAlert { display: none; background: #fff7ed; border: 1px solid #fdba74; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .mini-history-item { background: white; border: 1px solid #fed7aa; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } .filters-bar { flex-direction: column; } .filter-select { width: 100%; } }
     </style>
 </head>
 <body>
 
 <div id="loginScreen">
-    <div class="login-card">
-        <h2 style="margin-top:0; color:var(--brand);">ADIFINCAS</h2>
-        <p>Gestión de Incidencias</p>
+    <div class="login-box">
+        <h1 style="color:var(--primary); margin:0 0 10px;">ADIFINCAS</h1>
+        <p style="color:#6b7280; margin-bottom:30px;">Intranet Segura</p>
         <form id="loginForm">
             <input type="email" id="loginEmail" class="login-input" placeholder="usuario@adifincas.es" required>
             <input type="password" id="loginPass" class="login-input" placeholder="Contraseña" required>
-            <button type="submit" class="btn-full">Entrar</button>
-            <p id="loginError" style="color:var(--danger); display:none; margin-top:10px;">Error de acceso</p>
+            <button type="submit" class="btn-login">Entrar al Sistema</button>
+            <div id="loginError" class="error-msg">Credenciales incorrectas</div>
         </form>
     </div>
 </div>
 
-<div class="sidebar">
-    <div class="logo">ADIFINCAS</div>
-    <div class="nav-item active" onclick="nav('dashboard')">📊 Dashboard</div>
-    <div class="nav-item" onclick="nav('tickets')">🎫 Tickets</div>
-    <div class="nav-item" onclick="nav('communities')">🏢 Comunidades</div>
-    
-    <div style="margin-top:auto; font-size:0.8rem; opacity:0.7;">
-        Usuario: <span id="displayUser">...</span>
-    </div>
-</div>
-
-<div class="main">
-    
-    <div id="view-dashboard" class="view active">
-        <div class="header">
-            <div class="title">Resumen</div>
-            <button class="btn-primary" onclick="openNewTicket()">+ Nueva Incidencia</button>
+<div class="container" id="appContainer">
+    <header>
+        <div class="logo">
+            <h1>ADIFINCAS <span style="font-size:0.5em; color:#9ca3af; font-weight:400">| Gestión v3.4</span></h1>
         </div>
-        
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:30px;">
-            <div style="background:white; padding:20px; border-radius:8px; border-left:4px solid var(--accent);">
-                <div style="color:#64748b;">Abiertos</div>
-                <div style="font-size:2rem; font-weight:bold;" id="kpiOpen">0</div>
-            </div>
-            <div style="background:white; padding:20px; border-radius:8px; border-left:4px solid var(--warning);">
-                <div style="color:#64748b;">En Curso</div>
-                <div style="font-size:2rem; font-weight:bold;" id="kpiPending">0</div>
-            </div>
-            <div style="background:white; padding:20px; border-radius:8px; border-left:4px solid var(--success);">
-                <div style="color:#64748b;">Resueltos</div>
-                <div style="font-size:2rem; font-weight:bold;" id="kpiSolved">0</div>
-            </div>
+        <div class="user-info">
+            <span class="user-badge" id="displayUser">Invitado</span>
+            <button class="btn-db" onclick="scrollToTable()">🗄️ Ver Listado</button>
+            <button class="btn-db" onclick="exportToExcel()" style="background:#15803d;">📥 Excel</button>
         </div>
+    </header>
 
-        <h3>Últimas Incidencias</h3>
-        <table class="crm-table">
-            <thead><tr><th>ID</th><th>Asunto</th><th>Comunidad</th><th>Estado</th><th>Agente</th></tr></thead>
-            <tbody id="dashTable"></tbody>
-        </table>
-    </div>
-
-    <div id="view-tickets" class="view">
-        <div class="header">
-            <div class="title">Listado de Incidencias</div>
-            <input type="text" id="searchTicket" placeholder="🔍 Buscar por comunidad, persona..." style="width:300px; margin:0;">
-        </div>
-        <table class="crm-table">
-            <thead><tr><th>ID</th><th>Fecha</th><th>Asunto</th><th>Comunidad</th><th>Solicitante</th><th>Estado</th></tr></thead>
-            <tbody id="ticketsTable"></tbody>
-        </table>
-    </div>
-
-    <div id="view-communities" class="view">
-        <div class="header">
-            <div class="title">Base de Datos Comunidades</div>
-        </div>
-        <div style="background:white; padding:20px; border-radius:8px; margin-bottom:20px;">
-            <h3>📤 Importar desde Excel (CSV)</h3>
-            <p style="color:#64748b; font-size:0.9rem;">Sube un archivo .csv con los nombres de las comunidades (una por línea) para actualizar el listado.</p>
-            <input type="file" id="csvFile" accept=".csv" style="border:1px dashed #cbd5e1; padding:20px; width:100%;">
-            <button class="btn-primary" onclick="processCSV()">Cargar Comunidades</button>
-            <div id="uploadStatus" style="margin-top:10px; font-weight:bold; color:var(--success);"></div>
-        </div>
-        
-        <h3>Listado Actual (<span id="commCount">0</span>)</h3>
-        <div id="commList" style="background:white; padding:20px; border-radius:8px; max-height:400px; overflow-y:auto; column-count:2;">
-            </div>
-    </div>
-
-</div>
-
-<div class="modal-overlay" id="newTicketModal">
-    <div class="modal-window" style="height:auto; max-width:500px; padding:30px; display:block;">
-        <h2 style="margin-top:0;">Nueva Incidencia</h2>
-        <form id="newTicketForm">
-            <label>Asunto / Resumen</label>
-            <input type="text" id="ntSubject" placeholder="Ej: Puerta garaje averiada" required>
-
-            <label>Comunidad</label>
-            <input type="text" id="ntCommunity" list="commDatalist" placeholder="Escribe para buscar..." required>
-            <datalist id="commDatalist"></datalist>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <div>
-                    <label>Solicitante</label>
-                    <input type="text" id="ntCaller" placeholder="Nombre persona" required>
+    <div class="main-grid">
+        <section class="form-section">
+            <h2 style="margin-top:0; color:var(--primary); font-size:1.2rem; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px;">📞 Registrar Llamada</h2>
+            <form id="callForm">
+                <div class="form-group">
+                    <label>Cliente / Razón Social</label>
+                    <input type="text" id="callerName" placeholder="Buscar nombre..." autocomplete="off" required>
                 </div>
-                <div>
+                <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" id="ntPhone" placeholder="600...">
+                    <input type="text" id="phoneNumber" placeholder="Ej: 600..." autocomplete="off" required>
                 </div>
+                <div class="form-group">
+                    <label>Comunidad</label>
+                    <input type="text" id="community" placeholder="Ej: C/ Mayor 1" autocomplete="off" required>
+                </div>
+
+                <div id="matchAlert">
+                    <h4 style="margin:0 0 10px; color:#c2410c; font-size:0.9rem;">⚠️ Historial Detectado:</h4>
+                    <div id="matchList"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Estado Inicial</label>
+                    <select id="status">
+                        <option value="Pendiente">🔴 Pendiente</option>
+                        <option value="En Curso">🟠 En Curso</option>
+                        <option value="Resuelto">🟢 Resuelto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Motivo de la Llamada</label>
+                    <textarea id="reason" placeholder="Describe el problema..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Acción Realizada / Nota</label>
+                    <textarea id="action" placeholder="Nota inicial..." style="min-height: 60px;"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" id="submitBtn">Guardar Registro</button>
+            </form>
+        </section>
+
+        <section class="data-section" id="databaseSection">
+            <div class="filters-bar">
+                <input type="text" id="mainSearch" class="filter-input" placeholder="🔍 Buscar por Nombre, Teléfono, Comunidad...">
+                <select id="filterStatus" class="filter-select" onchange="applyFilters()">
+                    <option value="">Todo Estado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En Curso">En Curso</option>
+                    <option value="Resuelto">Resuelto</option>
+                </select>
             </div>
 
-            <label>Descripción</label>
-            <textarea id="ntDesc" rows="3" required></textarea>
-
-            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
-                <button type="button" class="btn-action" onclick="closeModals()">Cancelar</button>
-                <button type="submit" class="btn-primary">Crear Incidencia</button>
+            <div style="overflow-x: auto;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Comunidad</th>
+                            <th>Estado</th>
+                            <th style="text-align:center;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="5" style="text-align:center; padding:30px; color:#64748b;">Cargando datos...</td></tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </section>
     </div>
 </div>
 
 <div class="modal-overlay" id="detailModal">
-    <div class="modal-window">
-        <div class="ticket-layout">
-            <div class="ticket-info">
-                <h3 id="dtId" style="color:#64748b; margin-top:0;">#TK-000</h3>
-                <h2 id="dtSubject" style="margin-top:5px; font-size:1.2rem;">Asunto</h2>
-                
-                <hr style="border:0; border-top:1px solid #e2e8f0; margin:20px 0;">
-                
-                <label>Estado</label>
-                <select id="dtStatus" onchange="updateStatus()">
-                    <option value="Nuevo">Nuevo</option>
-                    <option value="En Curso">En Curso</option>
-                    <option value="Resuelto">Resuelto</option>
-                </select>
+    <div class="modal">
+        <h2>Detalle del Registro</h2>
+        <input type="hidden" id="modalId">
+        <input type="hidden" id="modalOldAction">
 
-                <label>Comunidad</label>
-                <div id="dtComm" style="font-weight:bold; margin-bottom:15px;">...</div>
-
-                <label>Contacto</label>
-                <div style="background:white; border:1px solid #e2e8f0; padding:10px; border-radius:6px;">
-                    <div id="dtCaller">Nombre</div>
-                    <div id="dtPhone" style="color:var(--accent); font-size:0.9rem;">Tel</div>
-                </div>
-                
-                <div style="margin-top:30px;">
-                    <button class="btn-action" style="width:100%; color:var(--danger); border-color:var(--danger);" onclick="deleteTicket()">🗑 Eliminar</button>
-                    <button class="btn-action" style="width:100%; margin-top:10px;" onclick="closeModals()">Cerrar</button>
-                </div>
+        <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between;">
+            <div>
+                <small style="color:#64748b; font-weight:bold;">CLIENTE</small><br>
+                <span id="modalClientInfo">...</span>
             </div>
+            <div style="text-align:right;">
+                <small style="color:#64748b; font-weight:bold;">ESTADO</small><br>
+                <strong id="modalStatusDisplay" style="color:var(--primary);">...</strong>
+            </div>
+        </div>
+        <div style="margin-bottom:15px;">
+            <small style="color:#64748b; font-weight:bold;">COMUNIDAD</small><br>
+            <span id="modalCommunityDisplay">...</span>
+        </div>
+
+        <label>Historial de Notas y Acciones</label>
+        <div id="modalHistory" class="history-box"></div>
+
+        <div class="modal-buttons" id="viewButtons">
+            <button class="btn-close" onclick="closeModal()">Cerrar</button>
+            <button class="btn-add" onclick="showEditSection()">➕ Añadir Nota</button>
+        </div>
+
+        <div id="editSection">
+            <label>Nueva Nota (Se añadirá con fecha y hora)</label>
+            <textarea id="modalNewNote" rows="3" placeholder="Escribe aquí..."></textarea>
             
-            <div class="ticket-chat">
-                <div class="chat-feed" id="timelineFeed"></div>
-                <div class="chat-input">
-                    <textarea id="chatInput" rows="2" placeholder="Escribe una nota de seguimiento..."></textarea>
-                    <div style="text-align:right; margin-top:10px;">
-                        <button class="btn-primary" onclick="addNote()">Añadir Nota</button>
-                    </div>
-                </div>
+            <label style="margin-top:10px;">Actualizar Estado</label>
+            <select id="modalEditStatus">
+                <option value="Pendiente">Pendiente</option>
+                <option value="En Curso">En Curso</option>
+                <option value="Resuelto">Resuelto</option>
+            </select>
+
+            <div style="margin-top:15px;">
+                <button class="btn-save" onclick="saveAndClose()">Guardar Nota y Cerrar</button>
             </div>
         </div>
     </div>
@@ -247,9 +245,32 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, remove, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-    // --- CONFIGURACIÓN FIREBASE (PEGAR CLAVES) ---
+    // 1. LOGIN
+    const USERS = {
+        "inavarro@adifincas.es": { pass: "inavarro", name: "Navarro" },
+        "atencion1@adifincas.es": { pass: "atencion1", name: "Atencion1" },
+        "jmgallego@adifincas.es": { pass: "jmgallego", name: "Jmgallego" }
+    };
+    let CURRENT_USER_NAME = "Invitado";
+
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value.toLowerCase().trim();
+        const pass = document.getElementById("loginPass").value.trim();
+        if (USERS[email] && USERS[email].pass === pass) {
+            CURRENT_USER_NAME = USERS[email].name;
+            document.getElementById("displayUser").innerText = CURRENT_USER_NAME;
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("appContainer").style.display = "block";
+            initFirebase();
+        } else {
+            document.getElementById("loginError").style.display = "block";
+        }
+    });
+
+    // 2. FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyBqgvaRhWg7rm5FeKchH08H5zQr5d6fXDY",
         authDomain: "adifincas-db.firebaseapp.com",
@@ -261,252 +282,201 @@
         measurementId: "G-G1Y3L2LS3D"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    let db, callsRef, allCalls = [];
 
-    // ESTADO
-    let currentUser = null;
-    let currentTicketId = null;
-    let allTickets = [];
-    let allCommunities = [];
+    function initFirebase() {
+        const app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        callsRef = ref(db, 'registros_adifincas');
+        onValue(callsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (!data) { allCalls = []; renderTable([]); return; }
+            allCalls = Object.entries(data).map(([id, val]) => ({ id, ...val })).reverse();
+            applyFilters();
+            checkMatches();
+        });
+    }
 
-    const USERS = {
-        "inavarro@adifincas.es": {p:"inavarro", n:"Navarro"},
-        "atencion1@adifincas.es": {p:"atencion1", n:"Atención1"},
-        "jmgallego@adifincas.es": {p:"jmgallego", n:"JMGallego"}
+    // 3. TABLA Y FILTROS
+    window.scrollToTable = () => document.getElementById("databaseSection").scrollIntoView({behavior: "smooth"});
+    
+    window.applyFilters = function() {
+        const term = document.getElementById("mainSearch").value.toLowerCase();
+        const statusFilter = document.getElementById("filterStatus").value;
+
+        const filtered = allCalls.filter(c => {
+            const textMatch = JSON.stringify(c).toLowerCase().includes(term);
+            const statusMatch = statusFilter === "" || c.status === statusFilter;
+            return textMatch && statusMatch;
+        });
+        
+        renderTable(filtered);
     };
 
-    // LOGIN
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const mail = document.getElementById("loginEmail").value.trim().toLowerCase();
-        const pass = document.getElementById("loginPass").value.trim();
-        if(USERS[mail] && USERS[mail].p === pass){
-            currentUser = USERS[mail].n;
-            document.getElementById("displayUser").innerText = currentUser;
-            document.getElementById("loginScreen").style.display="none";
-            document.querySelector(".main").style.display="block";
-            initApp();
-        } else {
-            document.getElementById("loginError").style.display="block";
+    function renderTable(data) {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        data.forEach(call => {
+            const tr = document.createElement("tr");
+            const cleanStatus = call.status ? call.status.toLowerCase().replace(" ", "-") : "pendiente";
+            const comm = call.community || "-";
+            tr.innerHTML = `
+                <td style="color:#64748b; font-size:0.85em">${call.date}<br>${call.time}</td>
+                <td><strong>${call.name}</strong><br><small style="color:#64748b">${call.phone}</small></td>
+                <td>${comm}</td>
+                <td><span class="tag tag-${cleanStatus}">${call.status}</span></td>
+                <td style="text-align:center;">
+                    <button class="btn-action" onclick='openDetailFromTable("${call.id}")'>👁️ Ver / Editar</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 4. DETECTOR DE COINCIDENCIAS
+    const nameInput = document.getElementById("callerName");
+    const phoneInput = document.getElementById("phoneNumber");
+
+    function checkMatches() {
+        const nameVal = nameInput.value.toLowerCase();
+        const phoneVal = phoneInput.value.replace(/\s/g, '');
+        if (nameVal.length < 3 && phoneVal.length < 4) {
+            document.getElementById("matchAlert").style.display = "none";
+            return;
         }
-    });
-
-    function initApp() {
-        // Cargar Tickets
-        onValue(ref(db, 'crm_tickets'), (snap) => {
-            const data = snap.val();
-            allTickets = data ? Object.entries(data).map(([k,v])=>({id:k, ...v})).reverse() : [];
-            renderDash();
-            renderTickets();
+        const matches = allCalls.filter(call => {
+            const cName = call.name.toLowerCase();
+            const cPhone = call.phone.replace(/\s/g, '');
+            return (nameVal.length >= 3 && cName.includes(nameVal)) || 
+                   (phoneVal.length >= 4 && cPhone.includes(phoneVal));
         });
-
-        // Cargar Comunidades
-        onValue(ref(db, 'crm_communities'), (snap) => {
-            const data = snap.val();
-            allCommunities = data ? Object.values(data) : [];
-            renderCommunities();
-        });
+        renderMatches(matches);
     }
 
-    // RENDERIZADO
-    function renderDash() {
-        document.getElementById("kpiOpen").innerText = allTickets.filter(t=>t.status==='Nuevo').length;
-        document.getElementById("kpiPending").innerText = allTickets.filter(t=>t.status==='En Curso').length;
-        document.getElementById("kpiSolved").innerText = allTickets.filter(t=>t.status==='Resuelto').length;
-
-        const tbody = document.getElementById("dashTable");
-        tbody.innerHTML = "";
-        allTickets.slice(0, 5).forEach(t => {
-            tbody.innerHTML += `
-            <tr class="crm-row" onclick="window.openDetail('${t.id}')">
-                <td>${t.ticketNum}</td>
-                <td>${t.subject}</td>
-                <td>${t.community}</td>
-                <td><span class="badge st-${t.status==='Nuevo'?'nuevo':(t.status==='En Curso'?'curso':'resuelto')}">${t.status}</span></td>
-                <td>${t.agent}</td>
-            </tr>`;
-        });
-    }
-
-    function renderTickets() {
-        const tbody = document.getElementById("ticketsTable");
-        tbody.innerHTML = "";
-        allTickets.forEach(t => {
-            tbody.innerHTML += `
-            <tr class="crm-row" onclick="window.openDetail('${t.id}')">
-                <td style="font-weight:bold; color:var(--accent)">${t.ticketNum}</td>
-                <td>${t.date}</td>
-                <td>${t.subject}</td>
-                <td>${t.community}</td>
-                <td>${t.caller}</td>
-                <td><span class="badge st-${t.status==='Nuevo'?'nuevo':(t.status==='En Curso'?'curso':'resuelto')}">${t.status}</span></td>
-            </tr>`;
-        });
-    }
-
-    function renderCommunities() {
-        // Llenar Datalist del formulario
-        const dl = document.getElementById("commDatalist");
-        dl.innerHTML = "";
-        allCommunities.sort().forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c;
-            dl.appendChild(opt);
-        });
-
-        // Llenar lista visual
-        document.getElementById("commCount").innerText = allCommunities.length;
-        document.getElementById("commList").innerHTML = allCommunities.map(c => `<div style="padding:5px; border-bottom:1px solid #eee;">🏢 ${c}</div>`).join('');
-    }
-
-    // CARGA MASIVA DE CSV
-    window.processCSV = function() {
-        const file = document.getElementById("csvFile").files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const text = e.target.result;
-            // Separar por lineas y limpiar
-            const lines = text.split(/\r\n|\n/).map(line => line.trim()).filter(line => line.length > 0);
-            
-            // Subir a Firebase (sobrescribe o añade según lógica, aquí vamos a reemplazar lista completa para evitar duplicados complejos o podríamos añadir)
-            // Para simplicidad: Añadimos una entrada por cada comunidad usando el nombre como clave (limpiando caracteres raros)
-            const updates = {};
-            lines.forEach(comm => {
-                const key = comm.replace(/[.#$/\[\]]/g, ""); // Firebase no permite estos caracteres en claves
-                updates[key] = comm;
-            });
-
-            update(ref(db, 'crm_communities'), updates).then(() => {
-                document.getElementById("uploadStatus").innerText = `✅ ${lines.length} comunidades cargadas con éxito.`;
-            });
-        };
-        reader.readAsText(file);
-    };
-
-    // CREAR TICKET
-    window.openNewTicket = () => document.getElementById("newTicketModal").style.display = "flex";
-    window.closeModals = () => document.querySelectorAll(".modal-overlay").forEach(e=>e.style.display="none");
-
-    document.getElementById("newTicketForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const now = new Date();
-        const newRef = push(ref(db, 'crm_tickets'));
-        const tkData = {
-            ticketNum: "INC-" + Math.floor(10000 + Math.random() * 90000),
-            subject: document.getElementById("ntSubject").value,
-            community: document.getElementById("ntCommunity").value,
-            caller: document.getElementById("ntCaller").value,
-            phone: document.getElementById("ntPhone").value,
-            desc: document.getElementById("ntDesc").value,
-            status: "Nuevo",
-            agent: currentUser,
-            date: now.toLocaleDateString('es-ES'),
-            ts: Date.now()
-        };
+    function renderMatches(matches) {
+        const alertBox = document.getElementById("matchAlert");
+        const list = document.getElementById("matchList");
+        if (matches.length === 0) { alertBox.style.display = "none"; return; }
         
-        set(newRef, tkData);
-        // Primer mensaje en timeline
-        push(ref(db, `crm_tickets/${newRef.key}/timeline`), {
-            text: "Incidencia creada: " + tkData.desc,
-            author: "Sistema",
-            type: "system",
-            ts: Date.now()
-        });
-
-        document.getElementById("newTicketForm").reset();
-        window.closeModals();
-    });
-
-    // DETALLE
-    window.openDetail = function(id) {
-        currentTicketId = id;
-        const t = allTickets.find(x => x.id === id);
+        alertBox.style.display = "block";
+        list.innerHTML = "";
         
-        document.getElementById("dtId").innerText = t.ticketNum;
-        document.getElementById("dtSubject").innerText = t.subject;
-        document.getElementById("dtStatus").value = t.status;
-        document.getElementById("dtComm").innerText = "🏢 " + t.community;
-        document.getElementById("dtCaller").innerText = t.caller;
-        document.getElementById("dtPhone").innerText = t.phone || "Sin teléfono";
-
-        // Cargar chat
-        onValue(ref(db, `crm_tickets/${id}/timeline`), (snap) => {
-            const feed = document.getElementById("timelineFeed");
-            feed.innerHTML = "";
-            const msgs = snap.val() ? Object.values(snap.val()).sort((a,b)=>a.ts - b.ts) : [];
-            
-            msgs.forEach(m => {
-                if(m.type === 'system') {
-                    feed.innerHTML += `<div class="msg-system">${m.text} - ${new Date(m.ts).toLocaleString()}</div>`;
-                } else {
-                    feed.innerHTML += `
-                    <div class="msg-item">
-                        <div class="msg-meta"><strong>${m.author}</strong> • ${new Date(m.ts).toLocaleString()}</div>
-                        <div class="msg-bubble">${m.text}</div>
-                    </div>`;
-                }
+        matches.slice(0, 3).forEach(m => {
+            const item = document.createElement("div");
+            item.className = "mini-history-item";
+            item.innerHTML = `
+                <div>
+                    <strong>${m.date}</strong> - ${m.status}<br>
+                    <span style="font-size:0.8em; color:#666">${m.community || 'Sin comunidad'}</span>
+                </div>
+                <button class="btn-action" style="font-size:0.7rem; padding:4px 8px;">👁️ Ver</button>
+            `;
+            item.querySelector("button").addEventListener("click", (e) => { 
+                e.preventDefault(); 
+                openDetailModal(m); 
             });
-            feed.scrollTop = feed.scrollHeight;
+            list.appendChild(item);
         });
+    }
 
+    // 5. MODAL UNIFICADO
+    window.openDetailFromTable = function(id) {
+        const call = allCalls.find(c => c.id === id);
+        if(call) openDetailModal(call);
+    }
+
+    window.openDetailModal = function(call) {
+        document.getElementById("modalId").value = call.id;
+        document.getElementById("modalOldAction").value = call.action || "";
+        
+        document.getElementById("modalStatusDisplay").innerText = call.status;
+        document.getElementById("modalCommunityDisplay").innerText = call.community || "N/A";
+        document.getElementById("modalClientInfo").innerText = `${call.name} (${call.phone})`;
+        
+        const historyText = `[MOTIVO]: ${call.reason}\n\n[HISTORIAL]:\n${call.action || "Sin notas previas."}`;
+        document.getElementById("modalHistory").innerText = historyText;
+
+        // Reset vista
+        document.getElementById("editSection").style.display = "none";
+        document.getElementById("viewButtons").style.display = "flex";
         document.getElementById("detailModal").style.display = "flex";
     };
 
-    window.addNote = function() {
-        const txt = document.getElementById("chatInput").value;
-        if(!txt) return;
-        push(ref(db, `crm_tickets/${currentTicketId}/timeline`), {
-            text: txt,
-            author: currentUser,
-            type: "user",
-            ts: Date.now()
+    window.showEditSection = function() {
+        document.getElementById("viewButtons").style.display = "none";
+        document.getElementById("editSection").style.display = "block";
+        
+        const currentStatus = document.getElementById("modalStatusDisplay").innerText;
+        document.getElementById("modalEditStatus").value = currentStatus;
+        document.getElementById("modalNewNote").focus();
+    };
+
+    window.saveAndClose = function() {
+        const id = document.getElementById("modalId").value;
+        const newNote = document.getElementById("modalNewNote").value.trim();
+        const newStatus = document.getElementById("modalEditStatus").value;
+        const oldAction = document.getElementById("modalOldAction").value;
+
+        if (!newNote) { alert("La nota no puede estar vacía."); return; }
+
+        const now = new Date();
+        const timeStamp = `[${now.toLocaleDateString()} ${now.toLocaleTimeString().slice(0,5)}] ${CURRENT_USER_NAME}:`;
+        const finalAction = `${timeStamp} ${newNote}\n\n${oldAction}`; 
+
+        update(ref(db, 'registros_adifincas/' + id), {
+            status: newStatus,
+            action: finalAction
+        }).then(() => {
+            closeModal();
         });
-        document.getElementById("chatInput").value = "";
     };
 
-    window.updateStatus = function() {
-        update(ref(db, `crm_tickets/${currentTicketId}`), {
-            status: document.getElementById("dtStatus").value
-        });
-    };
-    
-    window.deleteTicket = function() {
-        if(confirm("¿Borrar incidencia definitivamente?")) {
-            remove(ref(db, `crm_tickets/${currentTicketId}`));
-            window.closeModals();
-        }
+    window.closeModal = function() {
+        document.getElementById("detailModal").style.display = "none";
+        document.getElementById("modalNewNote").value = "";
     };
 
-    // NAVEGACIÓN
-    window.nav = function(view) {
-        document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-        document.getElementById("view-"+view).classList.add("active");
-        document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-        event.currentTarget.classList.add("active");
-    };
-
-    // BUSCADOR
-    document.getElementById("searchTicket").addEventListener("keyup", (e)=>{
-        const term = e.target.value.toLowerCase();
-        const filtered = allTickets.filter(t => JSON.stringify(t).toLowerCase().includes(term));
-        // Re-render simplificado (copia de la función renderTickets)
-        const tbody = document.getElementById("ticketsTable");
-        tbody.innerHTML = "";
-        filtered.forEach(t => {
-            tbody.innerHTML += `
-            <tr class="crm-row" onclick="window.openDetail('${t.id}')">
-                <td style="font-weight:bold; color:var(--accent)">${t.ticketNum}</td>
-                <td>${t.date}</td>
-                <td>${t.subject}</td>
-                <td>${t.community}</td>
-                <td>${t.caller}</td>
-                <td><span class="badge st-${t.status==='Nuevo'?'nuevo':(t.status==='En Curso'?'curso':'resuelto')}">${t.status}</span></td>
-            </tr>`;
+    // 6. GUARDAR NUEVO
+    document.getElementById("callForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = true; btn.innerText = "Guardando...";
+        
+        const now = new Date();
+        push(callsRef, {
+            user: CURRENT_USER_NAME,
+            name: document.getElementById("callerName").value,
+            phone: document.getElementById("phoneNumber").value,
+            community: document.getElementById("community").value,
+            status: document.getElementById("status").value,
+            reason: document.getElementById("reason").value,
+            action: document.getElementById("action").value,
+            date: now.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            time: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+        }).then(() => {
+            document.getElementById("callForm").reset();
+            document.getElementById("matchAlert").style.display = "none";
+            btn.disabled = false; btn.innerText = "Guardar Registro";
         });
     });
+
+    // 7. EXCEL
+    window.exportToExcel = () => {
+        let csv = "Fecha,Hora,Agente,Cliente,Comunidad,Telefono,Estado,Motivo,Accion\n";
+        allCalls.forEach(c => {
+            csv += `"${c.date}","${c.time}","${c.user}","${c.name}","${c.community||''}","${c.phone}","${c.status}","${c.reason.replace(/"/g, '""')}","${(c.action||'').replace(/"/g, '""')}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Base_Datos_Adifincas.csv";
+        link.click();
+    };
+
+    // Listeners
+    nameInput.addEventListener("input", checkMatches);
+    phoneInput.addEventListener("input", checkMatches);
+    document.getElementById("mainSearch").addEventListener("keyup", applyFilters);
 
 </script>
 </body>
